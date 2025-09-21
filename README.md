@@ -64,6 +64,7 @@ During this project, I learned:
 - Usage of Retreivals and chains
 - Designing a conversational frontend with animations
 - Handling conversational state and history per video
+
 💡 This project strengthened both my AI/ML understanding and full-stack development skills!
 
 
