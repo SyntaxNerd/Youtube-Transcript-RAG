@@ -1,5 +1,5 @@
 
-# Youtube Transcript Rag System
+# Youtube Transcript Rag System 🎥
 
 A **ChatGPT-style conversational AI** that answers questions from **YouTube video transcripts** using a **Retrieval-Augmented Generation (RAG)** pipeline.  
 
@@ -29,7 +29,7 @@ A **ChatGPT-style conversational AI** that answers questions from **YouTube vide
 Clone the repo
 
 ```bash
-git clone https://github.com/<your-username>/YouTube-Transcript-RAG.git
+git clone https://github.com/SyntaxNerd/YouTube-Transcript-RAG.git
 cd YouTube-Transcript-RAG
 ```
 Create Virtual Environments
