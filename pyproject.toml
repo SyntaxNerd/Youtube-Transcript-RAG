@@ -1,0 +1,25 @@
+[project]
+name = "youtubetranscriptrag"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "faiss-cpu>=1.12.0",
+    "fastapi>=0.116.2",
+    "google-genai>=1.38.0",
+    "langchain>=0.3.27",
+    "langchain-community>=0.3.29",
+    "langchain-core>=0.3.76",
+    "langchain-google-genai>=2.1.12",
+    "langchain-groq>=0.3.8",
+    "langchain-huggingface>=0.3.1",
+    "numpy>=2.2.6",
+    "pandas>=2.3.2",
+    "python-dotenv>=1.1.1",
+    "scikit-learn>=1.7.2",
+    "streamlit>=1.49.1",
+    "transformers>=4.56.2",
+    "uvicorn>=0.36.0",
+    "youtube-transcript-api>=1.2.2",
+]

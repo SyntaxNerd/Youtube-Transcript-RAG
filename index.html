@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Transcript RAG</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      color: #ffdd59;
+      text-shadow: 0px 0px 15px rgba(255, 221, 89, 0.7);
+    }
+
+    #chat-container {
+      flex: 1;
+      width: 95%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+    }
+
+    .message {
+      margin: 12px 0;
+      padding: 15px 20px;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      max-width: 80%;
+      line-height: 1.5;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transform: translateY(15px);
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: linear-gradient(135deg, #ff6a00, #ee0979);
+      align-self: flex-end;
+      text-align: right;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: rgba(0, 0, 0, 0.6);
+      align-self: flex-start;
+      text-align: left;
+      color: #e0e0e0;
+    }
+
+    #input-bar {
+      width: 95%;
+      max-width: 800px;
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+    }
+
+    #videoId {
+      flex: 1;
+      margin-right: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1rem;
+    }
+
+    #query {
+      flex: 3;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ff6a00, #ee0979);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>YouTube Transcript RAG 🎥</h1>
+  <div id="chat-container"></div>
+
+  <div id="input-bar">
+    <input type="text" id="videoId" placeholder="Video ID">
+    <input type="text" id="query" placeholder="Ask something...">
+    <button onclick="askQuestion()">Send</button>
+  </div>
+
+  <script>
+    const chatContainer = document.getElementById("chat-container");
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.innerHTML = text;
+      chatContainer.appendChild(msg);
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      anime({
+        targets: msg,
+        opacity: [0, 1],
+        translateY: [15, 0],
+        duration: 600,
+        easing: "easeOutQuad"
+      });
+      return msg;
+    }
+
+    function formatAnswer(answer) {
+      const lines = answer.split("\n");
+      let formatted = "";
+      let inList = false;
+
+      for (let line of lines) {
+        line = line.trim();
+        if (line.startsWith("-") || line.startsWith("*")) {
+          if (!inList) { formatted += "<ul>"; inList = true; }
+          formatted += `<li>${line.slice(1).trim()}</li>`;
+        } else {
+          if (inList) { formatted += "</ul>"; inList = false; }
+          formatted += `<p>${line}</p>`;
+        }
+      }
+      if (inList) formatted += "</ul>";
+      return formatted;
+    }
+
+    async function askQuestion() {
+      const videoId = document.getElementById("videoId").value.trim();
+      const query = document.getElementById("query").value.trim();
+      if (!query || !videoId) return;
+
+      appendMessage(query, "user");
+      document.getElementById("query").value = "";
+
+      const response = await fetch("http://127.0.0.1:8000/home", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ video_id: videoId, query })
+      });
+
+      const data = await response.json();
+      const answer = data.answer || "No answer found.";
+
+      const botMsg = appendMessage("", "bot");
+
+      // Typing animation (word by word)
+      const words = answer.split(" ");
+      let i = 0;
+      function typeWord() {
+        if (i < words.length) {
+          botMsg.innerHTML = formatAnswer(words.slice(0, i+1).join(" "));
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+          i++;
+          setTimeout(typeWord, 80);
+        }
+      }
+      typeWord();
+    }
+  </script>
+</body>
+</html>

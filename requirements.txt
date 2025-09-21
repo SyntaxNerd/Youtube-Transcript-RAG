@@ -1,0 +1,13 @@
+pandas
+numpy
+youtube-transcript-api
+langchain
+langchain-core
+langchain-community
+langchain-groq
+langchain-huggingface
+google-genai
+langchain-google-genai
+fastapi
+python-dotenv
+faiss-cpu
